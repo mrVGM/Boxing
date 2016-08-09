@@ -1,0 +1,75 @@
+﻿@model Boxing.Contracts.Dto.Match
+
+@{
+    ViewBag.Title = "View";
+    Layout = "~/Views/Shared/_Signed.cshtml";
+}
+
+<h2>View</h2>
+
+<div>
+    <h4>Match</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.boxer1)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.boxer1)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.boxer2)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.boxer2)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.place)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.place)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.dateOfMatch)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.dateOfMatch)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.description)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.description)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.hasFinished)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.hasFinished)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.winner)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.winner)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.id }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

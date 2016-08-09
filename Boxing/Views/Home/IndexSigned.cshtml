@@ -1,0 +1,32 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+    if (ViewBag.type == 0)
+    {
+        Layout = "/Views/Shared/_Unsigned.cshtml";
+    }
+    else
+    {
+        Layout = string.Format("/Views/Shared/_Signed.cshtml");
+    }
+}
+
+<div class="jumbotron">
+    <h1>Boxing predictions</h1>
+    <p class="lead">A system that lets you check how good are you at predicting the outcome of boxing matches.</p>
+
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <h2>Matches</h2>
+        <p>
+            See the available matches.
+        </p>
+        <p><a class="btn btn-default" href="/Matches">Click here &raquo;</a></p>
+    </div>
+    <div class="col-md-4">
+        <h2>Rating</h2>
+        <p>Check out the rating table.</p>
+        <p><a class="btn btn-default" href="/Users">Click here &raquo;</a></p>
+    </div>
+</div>

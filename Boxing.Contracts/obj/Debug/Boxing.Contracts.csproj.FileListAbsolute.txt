@@ -1,0 +1,5 @@
+C:\Users\V\Desktop\Azure\Boxing.Api.Services\Boxing.Contracts\bin\Debug\Boxing.Contracts.dll
+C:\Users\V\Desktop\Azure\Boxing.Api.Services\Boxing.Contracts\bin\Debug\Boxing.Contracts.pdb
+C:\Users\V\Desktop\Azure\Boxing.Api.Services\Boxing.Contracts\obj\Debug\Boxing.Contracts.csprojResolveAssemblyReference.cache
+C:\Users\V\Desktop\Azure\Boxing.Api.Services\Boxing.Contracts\obj\Debug\Boxing.Contracts.dll
+C:\Users\V\Desktop\Azure\Boxing.Api.Services\Boxing.Contracts\obj\Debug\Boxing.Contracts.pdb

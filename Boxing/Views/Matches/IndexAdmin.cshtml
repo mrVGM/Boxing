@@ -1,0 +1,204 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Signed.cshtml";
+}
+
+
+<script>
+    function setWinner(form, id, success) {
+        form.submit(function (e) {
+            $.ajax({
+                type: "POST",
+                url: "/Matches/Winner/" + id.toString(),
+                data: form.serialize(),
+                success: success,
+                error: function (xhr, ajaxOptions, thrownError) {
+                    if (xhr.status == 401) {
+                        window.location.href = "/Logins/Create";
+                    }
+                }
+            });
+
+            e.preventDefault();
+        });
+    }
+    function cancelMatch(id) {
+        $.ajax({
+            type: "GET",
+            url: "/Matches/Delete/" + id.toString(),
+            success: function (data) {
+                $("#tr" + id.toString()).remove();
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                if (xhr.status == 401) {
+                    window.location.href = "/Logins/Create";
+                }
+            }
+        });
+    }
+</script>
+
+        
+
+<table class="table" style="margin-top:20px;" id="matchTable">
+    
+</table>
+
+
+<script>
+
+    function generateMatchInfo(match) {
+        var $col = $("<div></div>").attr({ "class": "col-lg-6" });
+        var $dl = $("<dl></dl>").attr({ "class": "dl-horizontal" });
+        $col.append($dl);
+        $dl.append(
+            "<dt>"
+                + match.boxer1 + " vs " + match.boxer2 +
+                "</dt>\
+                <dd></dd>"
+            );
+        $dl.append(
+            "<dt>\
+                Date of match\
+                </dt>\
+                <dd>"
+                    + match.dateOfMatch +
+                "</dd>"
+            );
+        $dl.append(
+            "<dt>\
+                Place\
+            </dt>\
+            <dd>"
+                + match.place +
+            "</dd>"
+            );
+        $dl.append(
+            "<dt>\
+                Description\
+            </dt>\
+            <dd>"
+                + match.description +
+            "</dd>"
+            );
+        if (match.hasFinished) {
+            if (match.winner == 1) {
+                $dl.append(
+                    "<dt>\
+                        Winner\
+                    </dt>\
+                    <dd>"
+                        + match.boxer1 +
+                    "</dd>"
+                    );
+            }
+            else {
+                $dl.append(
+                    "<dt>\
+                        Winner\
+                    </dt>\
+                    <dd>"
+                        + match.boxer2 +
+                    "</dd>"
+                    );
+            }
+        }
+        return $col;
+    }
+
+    function generateMatchForm(match) {
+        var $col = $("<div></div>").attr({ "class": "col-lg-6" });
+        var $form = $("<form></form>").attr({ "id": match.id });
+
+        setWinner($form, match.id, function () {
+            $("#tr" + match.id).remove();
+        });
+
+
+        $col.append($form);
+
+        var $div = $("<div></div>").attr({ "class": "form-horizontal" });
+        $form.append($div);
+
+        $div.append("<h4>Set the winner</h4>");
+        $div.append("<hr />");
+
+
+        var $select = $("<select></select>").attr({
+            "class": "form-control",
+            "data-val": true,
+            "data-val-number": "The field winner must be a number.",
+            "data-val-required": "The winner field is required.",
+            "id": "winner",
+            "name": "winner"
+        });
+        $select.append('<option value="0">-- Select the winner --</option>');
+        $select.append('<option value="1">' + match.boxer1 + '</option>');
+        $select.append('<option value="2">' + match.boxer2 + '</option>');
+
+        var $col10 = $("<div></div>").attr({ "class": "col-md-10" });
+        $col10.append($select);
+        $col10.append('<span class="field-validation-valid text-danger" data-valmsg-for="winner" data-valmsg-replace="true"></span>');
+
+        var $formGroup1 = $("<div></div>").attr({ "class": "form-group" });
+        $formGroup1.append('<label class="control-label col-md-2" for="winner">Winner</label>');
+        $formGroup1.append($col10);
+
+        var $formGroup2 = $("<div></div>").attr({ "class": "form-group" });
+        var $tmp = $('<div class="col-md-offset-2 col-md-10"></div>');
+        $tmp.append('<input type="submit" value="Submit" class="btn btn-default" />');
+        var $button = $('<input type="button" value="Cancel match" class="btn btn-default" style="margin-left: 5px;" />');
+        $button.click(function () { cancelMatch(match.id); });
+        $tmp.append($button);
+        $formGroup2.append($tmp);
+
+        $div.append($formGroup1);
+        $div.append($formGroup2);
+
+        return $col;
+    }
+
+    function generateMatchSection(match, id) {
+        var $tr = $("<tr></tr>").attr({"id": "tr" + id.toString()});
+        var $td = $("<td></td>");
+        $tr.append($td);
+
+        var $div = $("<div></div>").attr({ "class": "row" });
+        $td.append($div);
+
+        $div.append(generateMatchInfo(match));
+        $div.append(generateMatchForm(match));
+
+        return $tr;
+    }
+
+    function loadMatches() {
+
+        $.ajax({
+            type: "GET",
+            url: '/Matches/Ajax?skip=0&take=10&searchString=""',
+            success: function (data) {
+
+                $("#matchTable").empty();
+
+                $("#matchTable").append('<h4><a href="/Matches/Create">Create new match</a></h4>');
+
+                for (var i = 0; i < data.length; i++) {
+                    $("#matchTable").append(generateMatchSection(data[i], data[i].id));
+                }
+
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                if (xhr.status == 401) {
+                    window.location.href = "/Logins/Create";
+                }
+            }
+        });
+    }
+
+    $(document).ready(function () {
+        loadMatches();
+    });
+    
+</script>
+

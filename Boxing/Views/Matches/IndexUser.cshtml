@@ -1,0 +1,312 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Signed.cshtml";
+}
+
+<style>
+    #custom-search-input {
+        padding: 3px;
+        border: solid 1px #E4E4E4;
+        border-radius: 6px;
+        background-color: #fff;
+    }
+
+        #custom-search-input input {
+            border: 0;
+            box-shadow: none;
+        }
+
+        #custom-search-input button {
+            margin: 2px 0 0 0;
+            background: none;
+            box-shadow: none;
+            border: 0;
+            color: #666666;
+            padding: 0 8px 0 10px;
+            border-left: solid 1px #ccc;
+        }
+
+            #custom-search-input button:hover {
+                border: 0;
+                box-shadow: none;
+                border-left: solid 1px #ccc;
+            }
+
+        #custom-search-input .glyphicon-search {
+            font-size: 23px;
+        }
+</style>
+
+<div class="container" style="margin-top: 20px;">
+    <div class="row">
+        <div class="col-md-6"></div>
+        <div class="col-md-6">
+            <div id="custom-search-input">
+                <div class="input-group col-md-12">
+                    <input type="text" id="search" class="form-control input-lg" value="" />
+
+                    <span class="input-group-btn">
+                        <button class="btn btn-info btn-lg" type="button" onclick="search()">
+                            <i class="glyphicon glyphicon-search"></i>
+                        </button>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function makePrediction(form, id, success) {
+        form.submit(function (e) {
+            $.ajax({
+                type: "POST",
+                url: "/Matches/Prediction/" + id.toString(),
+                data: form.serialize(),
+                success: success,
+                error: function (xhr, ajaxOptions, thrownError) {
+                    if (xhr.status == 401) {
+                        window.location.href = "/Logins/Create";
+                    }
+                }
+            });
+            e.preventDefault();
+        });
+    }
+</script>
+
+<table class="table" style="margin-top:20px;" id="matchTable"></table>
+
+
+<script>
+
+    function generateMatchInfo(match) {
+        var $col = $("<div></div>").attr({ "class": "col-lg-6" });
+        var $dl = $("<dl></dl>").attr({ "class": "dl-horizontal" });
+        $col.append($dl);
+        $dl.append(
+            "<dt>"
+                + match.boxer1 + " vs " + match.boxer2 +
+                "</dt>\
+                <dd></dd>"
+            );
+        $dl.append(
+            "<dt>\
+                Date of match\
+                </dt>\
+                <dd>"
+                    + match.dateOfMatch +
+                "</dd>"
+            );
+        $dl.append(
+            "<dt>\
+                Place\
+            </dt>\
+            <dd>"
+                + match.place +
+            "</dd>"
+            );
+        $dl.append(
+            "<dt>\
+                Description\
+            </dt>\
+            <dd>"
+                + match.description +
+            "</dd>"
+            );
+        if (match.hasFinished) {
+            if (match.winner == 1) {
+                $dl.append(
+                    "<dt>\
+                        Winner\
+                    </dt>\
+                    <dd>"
+                        + match.boxer1 +
+                    "</dd>"
+                    );
+            }
+            else {
+                $dl.append(
+                    "<dt>\
+                        Winner\
+                    </dt>\
+                    <dd>"
+                        + match.boxer2 +
+                    "</dd>"
+                    );
+            }
+        }
+        return $col;
+    }
+
+    function getPrediction(id) {
+        $.ajax({
+            type: "GET",
+            url: "/Matches/Prediction/" + id.toString(),
+            success: function (data) {
+                if (data.winner == 1) {
+                    $("#guess" + id.toString()).text(matches[id].boxer1);
+                }
+                else if (data.winner == 2) {
+                    $("#guess" + id.toString()).text(matches[id].boxer2);
+                }
+                else {
+                    $("#guess" + id.toString()).text("N/A");
+                }
+            }
+        });
+    }
+
+    function generateMatchForm(match) {
+        var $col = $("<div></div>").attr({ "class": "col-lg-6" });
+
+        
+        if (!match.hasFinished) {
+            var $dl = $("<dl></dl>").attr({ "class": "dl-horizontal" });
+
+            var $guess = $("<dt>Current guess</dt>");
+            $dl.append($guess);
+            $dl.append($("<dd></dd>").attr({ "id": "guess" + match.id.toString() }));
+            $col.append($dl);
+
+            getPrediction(match.id);
+        }
+        else {
+            var $dl = $("<dl></dl>").attr({ "class": "dl-horizontal" });
+
+            var $guess = $("<dt>Your guess</dt>");
+            $dl.append($guess);
+            $dl.append($("<dd></dd>").attr({ "id": "guess" + match.id.toString() }));
+            $col.append($dl);
+
+            getPrediction(match.id);
+
+            return $col;
+        }
+
+
+        var $form = $("<form></form>").attr({ "id": match.id });
+
+        makePrediction($form, match.id, function (data, textStatus, jqXHR) {
+            getPrediction(match.id);
+        });
+
+
+        $col.append($form);
+
+        var $div = $("<div></div>").attr({ "class": "form-horizontal" });
+        $form.append($div);
+
+        $div.append("<h4>Make a prediction</h4>");
+        $div.append("<hr />");
+
+
+        var $select = $("<select></select>").attr({
+            "class": "form-control",
+            "data-val": true,
+            "data-val-number": "The field winner must be a number.",
+            "data-val-required": "The winner field is required.",
+            "id": "winner",
+            "name": "winner"
+        });
+        $select.append('<option value="0">-- Select the winner --</option>');
+        $select.append('<option value="1">' + match.boxer1 + '</option>');
+        $select.append('<option value="2">' + match.boxer2 + '</option>');
+
+        var $col10 = $("<div></div>").attr({ "class": "col-md-10" });
+        $col10.append($select);
+        $col10.append('<span class="field-validation-valid text-danger" data-valmsg-for="winner" data-valmsg-replace="true"></span>');
+
+        var $formGroup1 = $("<div></div>").attr({ "class": "form-group" });
+        $formGroup1.append('<label class="control-label col-md-2" for="winner">Winner</label>');
+        $formGroup1.append($col10);
+
+        var $formGroup2 = $("<div></div>").attr({ "class": "form-group" });
+        var $tmp = $('<div class="col-md-offset-2 col-md-10"></div>');
+        $tmp.append('<input type="submit" value="Submit" class="btn btn-default" />');
+        $formGroup2.append($tmp);
+
+        $div.append($formGroup1);
+        $div.append($formGroup2);
+
+        return $col;
+    }
+
+    function generateMatchSection(match) {
+        var $tr = $("<tr></tr>");
+        var $td = $("<td></td>");
+        $tr.append($td);
+
+        var $div = $("<div></div>").attr({ "class": "row" });
+        $td.append($div);
+
+        $div.append(generateMatchInfo(match));
+        $div.append(generateMatchForm(match));
+        
+        return $tr;
+    }
+
+    var skip = 0;
+    var take = 10;
+    var matches = {};
+
+    function loadMatches(searchString) {
+
+        $.ajax({
+            type: "GET",
+            url: '/Matches/Ajax?skip=' + skip + '&take=' + (take + 1) + '&searchString="' + searchString + '"',
+            success: function (data) {
+
+                if (data.length < 11) {
+                    $("#next").css("display", "none");
+                }
+                else {
+                    $("#next").css("display", "block");
+                }
+                if (skip == 0) {
+                    $("#prev").css("display", "none");
+                }
+                else {
+                    $("#prev").css("display", "block");
+                }
+
+                $("#matchTable").empty();
+
+                for (var i = 0; i < data.length; i++) {
+                    matches[data[i].id] = data[i];
+                    $("#matchTable").append(generateMatchSection(data[i]));
+                }
+                
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                if (xhr.status == 401) {
+                    window.location.href = "/Logins/Create";
+                }
+            }
+        });
+    }
+
+    function search() {
+        var searchString = $("#search").val();
+        skip = 0;
+        take = 10;
+        loadMatches(searchString);
+    }
+
+
+    $(document).ready(function () {
+        loadMatches("");
+
+        $("#prev").click(function () {
+            skip = Math.max(0, skip - take);
+            loadMatches($("#search").val());
+        });
+
+        $("#next").click(function () {
+            skip = skip + take;
+            loadMatches($("#search").val());
+        });
+    });
+
+</script>
+

@@ -1,0 +1,63 @@
+﻿@model Boxing.Contracts.Dto.Match
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-6">
+            <dl class="dl-horizontal">
+                <dt>
+                    @Model.boxer1 vs @Model.boxer2
+                </dt>
+                <dd></dd>
+                <dt>
+                    Date of match
+                </dt>
+                <dd>
+                    @Model.dateOfMatch
+                </dd>
+                <dt>
+                    Place
+                </dt>
+                <dd>
+                    @Model.place
+                </dd>
+                <dt>
+                    Description
+                </dt>
+                <dd>
+                    @Model.description
+                </dd>
+                @if(Model.hasFinished)
+                {
+                    <dt>
+                        Winner
+                    </dt>
+                    <dd>
+                        @if (Model.winner == 1)
+                        {
+                            @Model.boxer1
+                        }
+                        else
+                        {
+                            @Model.boxer2
+                        }
+                    </dd> 
+                }
+            </dl>
+        </div>
+        <div class="col-lg-6">
+            
+            @if (ViewBag.type == 0)
+            {
+                if (!Model.hasFinished) {
+                    @Html.Partial("Match Forms/MatchFormUser")
+                }
+            }
+            else
+            {
+                @Html.Partial("Match Forms/MatchFormAdmin")
+            }
+
+        </div>
+    </div>
+</div>
+

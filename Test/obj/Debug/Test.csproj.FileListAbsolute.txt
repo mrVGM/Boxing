@@ -1,0 +1,6 @@
+C:\Users\V\Desktop\Azure\Boxing\Test\bin\Debug\Test.exe.config
+C:\Users\V\Desktop\Azure\Boxing\Test\bin\Debug\Test.exe
+C:\Users\V\Desktop\Azure\Boxing\Test\bin\Debug\Test.pdb
+C:\Users\V\Desktop\Azure\Boxing\Test\obj\Debug\Test.csprojResolveAssemblyReference.cache
+C:\Users\V\Desktop\Azure\Boxing\Test\obj\Debug\Test.exe
+C:\Users\V\Desktop\Azure\Boxing\Test\obj\Debug\Test.pdb

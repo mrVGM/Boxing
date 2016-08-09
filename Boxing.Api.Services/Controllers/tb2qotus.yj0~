@@ -1,0 +1,41 @@
+﻿using Boxing.Api.Services.Filters;
+using Boxing.Contracts;
+using Boxing.Contracts.Dto;
+using Boxing.Contracts.Requests.Logins;
+using Boxing.Core.Services.Interfaces;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Threading.Tasks;
+using System.Web.Http;
+
+namespace Boxing.Api.Services.Controllers
+{
+    public class LoginsController : ApiController
+    {
+        private readonly ILoginsService _loginsService;
+
+        public LoginsController(ILoginsService loginsService)
+        {
+            _loginsService = loginsService;
+        }
+
+        [HttpPost]
+        public async Task<Login> create([FromBody] LoginCreationRequest request)
+        {
+
+            return await _loginsService.create(request).ConfigureAwait(false);
+            
+        }
+
+        [UserAuth]
+        [HttpDelete]
+        public async Task<Unit> delete(int id)
+        {
+            return await _loginsService.delete(id).ConfigureAwait(false);
+        }
+
+    }
+}
